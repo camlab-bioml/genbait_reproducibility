@@ -10,6 +10,7 @@ Before running the workflow, ensure you have the following installed:
 - [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
 - [Git LFS](https://git-lfs.github.com/) (for handling large files)
 
+
 ## Setup
 
 ### Create a Virtual Environment
