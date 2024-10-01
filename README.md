@@ -24,7 +24,7 @@ source genbait_env/bin/activate  # On Windows use `genbait_env\Scripts\activate`
 ### Install the Package
 Navigate to the root directory of the project and run:
 ```sh
-git clone https://github.com/vesalkasmaeifar/genbait_reproducibility.git
+git clone https://github.com/camlab-bioml/genbait_reproducibility.git
 cd genbait_reproducibility
 pip install .
 ```
