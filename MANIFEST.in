@@ -1,0 +1,14 @@
+include README.md
+include setup.py
+include MANIFEST.in
+include Snakefile
+
+# Include all YAML files in the config directory
+recursive-include config *.yaml
+
+# Include all text and CSV files in the data directory and its subdirectories
+recursive-include data *.txt
+recursive-include data *.csv
+
+# Include all files in the src directory
+recursive-include src *.py

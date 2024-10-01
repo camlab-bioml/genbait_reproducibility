@@ -1,0 +1,24 @@
+datasets_path: 'data/dataset2/'
+df_norm_path: 'data/dataset2/df_norm.csv'
+ga_results_path: 'results/dataset2/GA_results/'
+ml_results_path: 'results/dataset2/ML_results/'
+plots_path: 'results/dataset2/plots/'
+fitness_penalty_path: 'results/dataset2/fitness_penalty/'
+top_features_GA_path: 'results/dataset2/top_features_GA/'
+top_features_ML_path: 'results/dataset2/top_features_ML/'
+gsea_results_path: 'results/dataset2/gsea_results/'
+random_baseline: 'results/dataset2/random_baits/'
+random_baseline_benchmark: 'results/dataset2/random_baseline_benchmark/'
+ga_seeds_path: 'results/dataset2/GA_number_of_baits_seeds/'
+top_features_GA_seeds_path: 'results/dataset2/top_features_GA_seeds/'
+number_of_components: 14
+subset_range_GA: [30, 40]
+subset_range_ML: [30, 80]
+subset_range_random: [30, 40]
+population_size: 500
+number_of_generations: 1000
+cxbp: 0.3
+mutpb: 0.1
+leiden_resolutions: [0.5, 1, 1.5]
+gmm_cluster_numbers: [5, 10, 15, 20]
+use_primary_baits: false
