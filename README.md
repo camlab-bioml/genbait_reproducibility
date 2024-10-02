@@ -6,7 +6,7 @@ This repository contains the GENBAIT project for bait selection in BioID experim
 
 Before running the workflow, ensure you have the following installed:
 
-- [Python 3.6+](https://www.python.org/downloads/)
+- [Python 3.10+](https://www.python.org/downloads/)
 - [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
 - [Git LFS](https://git-lfs.github.com/) (for handling large files)
 
