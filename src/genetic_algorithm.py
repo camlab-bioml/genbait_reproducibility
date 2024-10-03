@@ -162,7 +162,7 @@ def evalSubsetCorrelation(df_norm, n_components, subset_range, individual):
     subset_indices = [i for i in range(len(individual)) if individual[i] == 1]
     
     if not (subset_range[0] <= len(subset_indices) <= subset_range[1]):
-        return 1e-1000,  # Penalize invalid individuals heavily
+        return 0,  # Penalize invalid individuals heavily
 
     # Subset the data and apply NMF
     subset_data = df_norm.to_numpy()[subset_indices, :]

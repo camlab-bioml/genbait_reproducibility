@@ -37,7 +37,7 @@ def evalSubsetCorrelationRandom(df_norm, n_components, subset_range, individual,
     
     # Ensure the subset size is within the desired range
     if not (subset_range[0] <= len(subset_indices) <= subset_range[1]):
-        fitness = -np.inf,   # penalize invalid individuals heavily
+        fitness = 0,   # penalize invalid individuals heavily
     else:
         # Subset the data based on the indices
         original_data = df_norm.to_numpy()
