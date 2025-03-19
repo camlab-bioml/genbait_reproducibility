@@ -2,17 +2,13 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import os
 
-directories = ["plots", "GA_results", "gsea_results", "random_baits"]
 
-for directory in directories:
-    if not os.path.exists(directory):
-        os.makedirs(directory)
 
 def load_data(filepath, sep=None, index_col=None):
     """Loads a CSV file and returns the resulting DataFrame."""
     return pd.read_csv(filepath, sep=sep, index_col=index_col)
 
-def preprocess_data(df, primary_baits=None, file_path='data/'):
+def preprocess_data(df, file_path,primary_baits=None,):
     """Preprocesses the data according to specific steps."""
 
 

@@ -146,7 +146,6 @@ def process_ml_results(df_norm, components_range, ml_path):
 
 
 def plot_nmf_scores(df_norm, components_range, ga_path , ml_path , random_path , save_path):
-    os.makedirs(save_path, exist_ok=True)
 
     ga_pickle_path = os.path.join(save_path, 'nmf_scores_ga.pkl')
     random_pickle_path = os.path.join(save_path, 'nmf_scores_random.pkl')

@@ -57,7 +57,6 @@ def plot_nmf_mean_values_with_shades(plots_path):
     # Set axis labels and formatting
     ax.set_xlabel('Number of baits', fontsize=18)
     ax.set_ylabel("NMF mean Pearson correlation score", fontsize=18)
-    # ax.set_title('Dataset 1: GO et al., 2021', fontsize=16)
     ax.legend(loc='lower right', fontsize=12)
     ax.set_xlim(x[0] , x[-1])
     ax.set_ylim(0,1)

@@ -13,7 +13,7 @@ matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Arial']
 
 
-def plot_max_values_for_baits_boxplot_seeds(plots_path, ga_seeds_path):
+def plot_max_values_for_baits_boxplot_seeds(ga_seeds_path, plots_path):
     start_bait = 30
     end_bait = 80
     num_seeds = 10
@@ -136,42 +136,4 @@ def plot_max_values_for_baits_boxplot_seeds(plots_path, ga_seeds_path):
     plt.savefig(f'{plots_path}boxplot_GA_vs_Random.svg', dpi=300)
     plt.savefig(f'{plots_path}boxplot_GA_vs_Random.pdf', dpi=300)
     plt.clf()
-
-# def heatmap_number_of_baits():
-#     methods = ['GA', 'chi_2', 'f_classif', 'mutual_info_classif', 'lasso', 'ridge', 'elastic_net', 'rf', 'gbm', 'xgb', 'random']
-#     baits = list(range(30, 81))  # Assuming baits from 30 to 80 inclusive
-#     averages = pd.DataFrame(index=methods, columns=baits)
-
-#     for method in methods:
-#         file_path = f'plots/boxplot_{method}.pkl'
-#         df = pd.read_pickle(file_path)
-#         averages.loc[method] = df.mean()
-
-#     # Convert the averages to numeric values
-#     averages = averages.apply(pd.to_numeric)
-
-#     # Normalize the DataFrame for color mapping
-#     normalized_df = (averages - averages.min().min()) / (averages.max().max() - averages.min().min())
-
-#     colormap = plt.cm.Blues  # Choose a colormap
-#     dot_size = 200  # Adjust dot size as needed
-
-#     plt.figure(figsize=(25, 10))
-#     ax = plt.gca()
-
-#     # Plotting each cell with a dot
-#     for i, method in enumerate(averages.index):
-#         for j, bait in enumerate(averages.columns):
-#             value = normalized_df.loc[method, bait]
-#             plt.scatter(x=j, y=i, s=dot_size, c=[colormap(value)], edgecolors='black', marker='o')
-#             plt.text(j, i, f"{averages.loc[method, bait]:.2f}", fontsize=8, ha='center', va='center')
-
-#     # Customizing the axes
-#     plt.xticks(ticks=np.arange(len(averages.columns)), labels=averages.columns, rotation=90)
-#     plt.yticks(ticks=np.arange(len(averages.index)), labels=averages.index)
-#     plt.colorbar(plt.cm.ScalarMappable(cmap=colormap, norm=plt.Normalize(vmin=0, vmax=1)), ax=ax, label='Normalized Average Value')
-#     plt.xlabel('Number of Baits')
-#     plt.ylabel('Methods')
-#     plt.yticks(rotation=0)  # Keep the method names horizontal for better readability
-#     plt.savefig('plots/number_of_baits_heatmap_nmf_scores.png')
 

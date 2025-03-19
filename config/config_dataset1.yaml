@@ -11,6 +11,7 @@ random_baseline: 'results/dataset1/random_baits/'
 random_baseline_benchmark: 'results/dataset1/random_baseline_benchmark/'
 ga_seeds_path: 'results/dataset1/GA_number_of_baits_seeds/'
 top_features_GA_seeds_path: 'results/dataset1/top_features_GA_seeds/'
+cell_lines_path: 'results/dataset1/cell_lines/'
 number_of_components: 20
 subset_range_GA: [50, 60]
 subset_range_ML: [30, 80]
@@ -22,4 +23,5 @@ mutpb: 0.1
 leiden_resolutions: [0.5, 1, 1.5]
 gmm_cluster_numbers: [15, 20, 25, 30]
 use_primary_baits: true
+
 

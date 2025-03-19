@@ -1,0 +1,6 @@
+Building DAG of jobs...
+MissingInputException in rule load_data in file /Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/genbait_reproducibility/Snakefile, line 21:
+Missing input files for rule load_data:
+    output: data/dataset2/df_norm.csv
+    affected files:
+        data/dataset2/genesymbols_uniprotids_less_than_110.csv

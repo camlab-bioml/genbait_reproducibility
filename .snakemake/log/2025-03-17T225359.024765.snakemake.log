@@ -1,0 +1,46 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 12
+Rules claiming more threads will be scaled down.
+Job stats:
+job                                  count
+---------------------------------  -------
+individual_components_correlation        1
+runtime_analysis                         1
+total                                    2
+
+Select jobs to execute...
+
+[Mon Mar 17 22:53:59 2025]
+rule runtime_analysis:
+    input: data/dataset1/df_norm.csv
+    output: results/dataset1/plots/runtime_plot.pdf
+    jobid: 1
+    reason: Missing output files: results/dataset1/plots/runtime_plot.pdf
+    resources: tmpdir=/var/folders/4l/lkwx3bk52l3f64_lrfgrjjwh0000gp/T
+
+[Mon Mar 17 22:54:02 2025]
+Finished job 1.
+1 of 2 steps (50%) done
+Select jobs to execute...
+
+[Mon Mar 17 22:54:02 2025]
+rule individual_components_correlation:
+    input: results/dataset1/plots/runtime_plot.pdf
+    output: results/dataset1/plots/nmf_component_bait_size_comparison.pdf
+    jobid: 0
+    reason: Missing output files: results/dataset1/plots/nmf_component_bait_size_comparison.pdf; Input files updated by another job: results/dataset1/plots/runtime_plot.pdf
+    resources: tmpdir=/var/folders/4l/lkwx3bk52l3f64_lrfgrjjwh0000gp/T
+
+[Mon Mar 17 22:54:06 2025]
+Error in rule individual_components_correlation:
+    jobid: 0
+    input: results/dataset1/plots/runtime_plot.pdf
+    output: results/dataset1/plots/nmf_component_bait_size_comparison.pdf
+    shell:
+        python3 src/main.py --step individual_components_correlation --config config/config_dataset1.yaml
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2025-03-17T225359.024765.snakemake.log

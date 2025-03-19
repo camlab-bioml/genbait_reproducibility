@@ -1,0 +1,13 @@
+,Median
+GA,1.0
+Random,1.0
+chi_2,1.0
+f_classif,1.0
+mutual_info_classif,1.0
+lasso,1.0
+ridge,1.0
+elastic_net,1.0
+rf,1.0
+gbm,1.0
+xgb,1.0
+nn,1.0

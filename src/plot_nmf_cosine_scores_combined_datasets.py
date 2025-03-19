@@ -1,116 +1,136 @@
 import os
 import numpy as np
 import pandas as pd
-from sklearn.decomposition import NMF
-from scipy.optimize import linear_sum_assignment
-import random
-import pickle
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from sklearn.metrics.pairwise import cosine_similarity
+from scipy import stats
+from statsmodels.stats.multitest import multipletests
+import itertools
+import pickle
 import matplotlib
+
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 matplotlib.rcParams['figure.dpi'] = 300
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Arial']
 
-def load_and_aggregate_data(dataset_path, components_range):
-    # Load the pickle files
-    ga_data = pickle.load(open(os.path.join(dataset_path, 'nmf_scores_cos_ga.pkl'), 'rb'))
-    random_data = pickle.load(open(os.path.join(dataset_path, 'nmf_scores_cos_random.pkl'), 'rb'))
-    ml_data = pickle.load(open(os.path.join(dataset_path, 'nmf_scores_cos_ml.pkl'), 'rb'))
+def plot_nmf_cos_combined(dataset_paths, component_ranges, save_path, output_prefix):
+    """
+    Loads NMF correlation results, performs statistical analysis, and generates a boxplot visualization.
 
-    # Aggregate data
-    aggregated_data = {}
-    for name, data in [('GA', ga_data), ('Random', random_data)] + list(ml_data.items()):
-        aggregated = {n: [] for n in components_range}
-        for feature_data in data.values():
-            for comp, values in feature_data.items():
-                if comp in components_range:
-                    aggregated[comp].extend(values)
-        aggregated_data[name] = aggregated
+    Args:
+        dataset_paths (list): List of dataset paths containing NMF correlation results.
+        component_ranges (list): List of component ranges corresponding to each dataset.
+        output_prefix (str): Prefix for saving output files (e.g., "plots/nmf_correlation").
+    """
 
-    return aggregated_data
+    def load_and_aggregate_data(dataset_path, components_range):
+        """Load NMF correlation data from a dataset and aggregate it across components."""
+        ga_data = pickle.load(open(os.path.join(dataset_path, 'nmf_cos_scores_ga.pkl'), 'rb'))
+        random_data = pickle.load(open(os.path.join(dataset_path, 'nmf_cos_scores_random.pkl'), 'rb'))
+        ml_data = pickle.load(open(os.path.join(dataset_path, 'nmf_cos_scores_ml.pkl'), 'rb'))
 
-# Define component ranges for each dataset
-components_range1 = range(15, 26)  # For dataset 1
-components_range2 = range(9, 20)   # For dataset 2
+        aggregated_data = {}
+        for name, data in [('GA', ga_data), ('Random', random_data)] + list(ml_data.items()):
+            aggregated = {n: [] for n in components_range}
+            for feature_data in data.values():
+                for comp, values in feature_data.items():
+                    if comp in components_range:
+                        aggregated[comp].extend(values)
+            aggregated_data[name] = aggregated
+        return aggregated_data
 
-# Load and aggregate data for both datasets
-dataset1_path = '/Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/snakemake original gradient penalty/plots'
-dataset2_path = '/Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/snakemake RNA Bodies gradient penalty/plots'
+    # Load datasets
+    aggregated_data_all = [load_and_aggregate_data(dataset_paths[i], component_ranges[i]) for i in range(len(dataset_paths))]
 
-# Load and aggregate data for both datasets
-aggregated_data1 = load_and_aggregate_data(dataset1_path, components_range1)
-aggregated_data2 = load_and_aggregate_data(dataset2_path, components_range2)
+    # Aggregate data for statistical testing
+    all_methods = set().union(*[set(data.keys()) for data in aggregated_data_all])
+    all_data = {method: [] for method in all_methods}
 
-# Calculate medians and average them
-median_values = {}
-for method in set(aggregated_data1.keys()).union(aggregated_data2.keys()):
-    medians = []
-    if method in aggregated_data1:
-        data1 = [score for comp_scores in aggregated_data1[method].values() for score in comp_scores]
-        if data1: medians.append(np.median(data1))
-    if method in aggregated_data2:
-        data2 = [score for comp_scores in aggregated_data2[method].values() for score in comp_scores]
-        if data2: medians.append(np.median(data2))
-    if medians:
-        median_values[method] = np.mean(medians)
+    for method in all_methods:
+        for data in aggregated_data_all:
+            if method in data:
+                all_data[method].extend([score for comp_scores in data[method].values() for score in comp_scores])
+
+    # Perform pairwise Mann-Whitney U tests
+    method_pairs = list(itertools.combinations(all_data.keys(), 2))
+    p_values = []
+
+    for method1, method2 in method_pairs:
+        stat, p_value = stats.mannwhitneyu(all_data[method1], all_data[method2], alternative='two-sided')
+        p_values.append((method1, method2, p_value))
+
+    # Apply multiple hypothesis correction (Benjamini-Hochberg)
+    method_names_1, method_names_2, raw_p_values = zip(*p_values)
+    adjusted_p_values = multipletests(raw_p_values, method='fdr_bh')[1]
+
+    # Save statistical significance results
+    stats_df = pd.DataFrame({'Method 1': method_names_1, 'Method 2': method_names_2, 'P-value': raw_p_values, 'Adjusted P-value': adjusted_p_values})
+    stats_df.to_csv(f'{save_path}{output_prefix}_statistical_significance.csv', index=False)
+
+    # Compute average median values for each method
+    median_values = {method: np.median(scores) for method, scores in all_data.items()}
+
+    # Save median values
+    median_df = pd.DataFrame(list(median_values.items()), columns=['Method', 'Median Value'])
+    median_df.to_csv(f'{save_path}{output_prefix}_median_values.csv', index=False)
+
+    # Mapping and ordering methods for visualization
+    methods_name_mapping = {
+        'GA': 'GENBAIT',
+        'Random': 'Random',
+        'chi_2': 'Chi-Squared',
+        'f_classif': 'ANOVA F',
+        'mutual_info_classif': 'Mutual Info',
+        'lasso': 'Lasso',
+        'ridge': 'Ridge',
+        'elastic_net': 'ElasticNet',
+        'rf': 'RF',
+        'gbm': 'GBM',
+        'xgb': 'XGB',
+        'nn': 'Neural Network'
+    }
+
+    ordered_methods = ['GA', 'nn', 'rf', 'gbm', 'xgb', 'lasso', 'ridge', 'elastic_net', 'mutual_info_classif', 'f_classif', 'chi_2', 'Random']
+    sorted_methods = [method for method in ordered_methods if method in all_data]
+
+    mapped_sorted_methods = [methods_name_mapping.get(method, method) for method in sorted_methods]
+
+    # Plot visualization
+    plt.figure(figsize=(12, 6))
+    colors = ['#F7941D', '#009444', '#FF5733']
+    positions = np.array(range(len(mapped_sorted_methods)))
+
+    flierprops = dict(marker='o', markersize=1, markerfacecolor='black', markeredgecolor='black')
+
+    all_data_points = []
+    for i, method in enumerate(sorted_methods):
+        data_per_dataset = [aggregated_data_all[d].get(method, {}).values() for d in range(len(dataset_paths))]
+        for d in range(len(dataset_paths)):
+            data = [score for comp_scores in data_per_dataset[d] for score in comp_scores]
+            all_data_points.extend(data)
+            plt.boxplot(data, positions=[positions[i] - 0.2 + (0.2 * d)], widths=0.18, patch_artist=True, boxprops=dict(facecolor=colors[d], color=colors[d]), medianprops=dict(color='black'), flierprops=flierprops)
+
+    # Highlight the best method
+    best_method = max(all_data, key=lambda k: np.median(all_data[k]))
+    best_method_position = positions[sorted_methods.index(best_method)]
+    plt.axvspan(best_method_position - 0.5, best_method_position + 0.5, color='#B9B9B5', alpha=0.3)
+
+    # Adjust plot settings
+    plt.xticks(positions, mapped_sorted_methods, rotation=90, fontsize=18)
+    plt.ylabel("Mean NMF Cosine similarity score", fontsize=18)
+    plt.legend(handles=[
+        mpatches.Patch(color=colors[0], label='Dataset 1'),
+        mpatches.Patch(color=colors[1], label='Dataset 2'),
+        mpatches.Patch(color=colors[2], label='Dataset 3')
+    ], loc='lower right', fontsize=18)
+    plt.tight_layout()
+
+    # Save updated plots
+    plt.savefig(f"{save_path}{output_prefix}_comparison.png", dpi=300)
+    plt.savefig(f"{save_path}{output_prefix}_comparison.svg", dpi=300)
+    plt.savefig(f"{save_path}{output_prefix}_comparison.pdf", dpi=300)
+    plt.clf()
 
 
-methods_name_mapping = {
-    'GA': 'GA',
-    'Random': 'Random',
-    'chi_2': 'Chi-Squared',
-    'f_classif': 'ANOVA F',
-    'mutual_info_classif': 'Mutual Info',
-    'lasso': 'Lasso',
-    'ridge': 'Ridge',
-    'elastic_net': 'ElasticNet',
-    'rf': 'RF',
-    'gbm': 'GBM',
-    'xgb': 'XGB'
-}
-
-# Sort methods by their average median value
-sorted_methods = sorted(median_values, key=median_values.get)[::-1]
-
-# Mapping method names
-mapped_sorted_methods = [methods_name_mapping.get(method, method) for method in sorted_methods]
-
-# Plot settings
-plt.figure(figsize=(15, 6))
-colors = ['lightblue', 'green']
-positions = np.array(range(len(mapped_sorted_methods)))
-outlier_props = dict(marker='o', markersize=2)
-
-
-for i, method in enumerate(sorted_methods):
-    if method in aggregated_data1:
-        data1 = [score for comp_scores in aggregated_data1[method].values() for score in comp_scores]
-        plt.boxplot(data1, positions=[positions[i] - 0.15], widths=0.3, patch_artist=True, boxprops=dict(facecolor=colors[0]), medianprops=dict(color='black'), flierprops=outlier_props)
-    if method in aggregated_data2:
-        data2 = [score for comp_scores in aggregated_data2[method].values() for score in comp_scores]
-        plt.boxplot(data2, positions=[positions[i] + 0.15], widths=0.3, patch_artist=True, boxprops=dict(facecolor=colors[1]), medianprops=dict(color='black'), flierprops=outlier_props)
-
-legend_handles = [
-    mpatches.Patch(color='lightblue', label='Dataset 1'),
-    mpatches.Patch(color='green', label='Dataset 2')
-]
-
-# Customize the plot
-plt.xticks(positions, mapped_sorted_methods, rotation=90, fontsize=16)
-# plt.xlabel("Methods")
-plt.ylabel("NMF mean Cosine similarity score", fontsize=16)
-# plt.title("Comparison of Methods across Datasets (Ordered by Average Median)")
-plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
-plt.ylim(0, 1)
-plt.tight_layout()
-
-# Save and show the plot
-save_path = 'plots'
-plt.savefig(os.path.join(save_path, 'nmf_scores_cos_comparison_ordered.png'), dpi=300)
-plt.savefig(os.path.join(save_path, 'nmf_scores_cos_comparison_ordered.svg'), dpi=300)
-plt.savefig(os.path.join(save_path, 'nmf_scores_cos_comparison_ordered.pdf'), dpi=300)
-plt.clf()

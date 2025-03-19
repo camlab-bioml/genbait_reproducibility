@@ -175,15 +175,15 @@ def plot_boxplots_baits_ml(all_seed_results, subset_range, methods, save_path='p
                 pickle.dump(data, file)
 
         # Generate the boxplot
-        # plt.figure(figsize=(12, 8))
-        # sns.boxplot(data=data)
-        # plt.xlabel('Number of Baits')
-        # plt.ylabel('Average Diagonal NMF Score')
-        # plt.title(f'Boxplot of Average Diagonal NMF Scores for {method}')
-        # plt.xticks(rotation=45)
-        # plt.tight_layout()
-        # plt.savefig(f"{save_path}/boxplot_{method}.png")
-        # plt.clf()
+        plt.figure(figsize=(12, 8))
+        sns.boxplot(data=data)
+        plt.xlabel('Number of Baits')
+        plt.ylabel('Average Diagonal NMF Score')
+        plt.title(f'Boxplot of Average Diagonal NMF Scores for {method}')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig(f"{save_path}/boxplot_{method}.png")
+        plt.clf()
         bait_numbers = list(range(30, 81))
         flierprops = dict(marker='o', color='lightgray', markersize=0.5) 
         plt.figure(figsize=(15, 6))
@@ -200,11 +200,11 @@ def plot_boxplots_baits_ml(all_seed_results, subset_range, methods, save_path='p
         plt.savefig(f'plots/nbaits vs. max value seeds boxplot {method}.png')
 
 
-def plot_boxplots_baits_ml_pkl(plots_path='plots'):
-    methods = ['chi_2','f_classif','mutual_info_classif','lasso','ridge','elastic_net','rf','gbm','xgb']  # Assuming df_norm contains method columns
+def plot_boxplots_baits_ml_pkl(save_path='plots'):
+    methods = ['chi_2','f_classif','mutual_info_classif','lasso','ridge','elastic_net','rf','gbm','xgb', 'nn']  # Assuming df_norm contains method columns
 
     for method in methods:
-        pickle_file_path = f"{plots_path}boxplot_{method}.pkl"
+        pickle_file_path = f"{save_path}/boxplot_{method}.pkl"
 
         # Check if the pickle file already exists
         if os.path.exists(pickle_file_path):
@@ -229,4 +229,4 @@ def plot_boxplots_baits_ml_pkl(plots_path='plots'):
         plt.title(f'Boxplot of Max Values for Different Number of Baits Across Seeds in {method}')
         plt.xticks(bait_numbers)  # Ensure x-axis ticks match the bait numbers
         plt.grid(True)
-        plt.savefig(f'{plots_path}nbaits vs. max value seeds boxplot {method}.png')
+        plt.savefig(f'plots/nbaits vs. max value seeds boxplot {method}.png')

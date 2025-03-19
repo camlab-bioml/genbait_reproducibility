@@ -1,0 +1,13 @@
+Method,Median Value
+RF,0.0
+GENBAIT,0.3776223776223776
+Ridge,0.0
+Neural Network,0.0
+ANOVA F,0.0
+Chi-Squared,0.0
+Lasso,0.0
+GBM,0.0
+Random,0.0
+XGB,0.0
+ElasticNet,0.0
+Mutual Info,0.0

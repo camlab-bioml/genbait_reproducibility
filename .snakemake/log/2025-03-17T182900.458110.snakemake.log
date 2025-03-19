@@ -1,0 +1,24 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 12
+Rules claiming more threads will be scaled down.
+Job stats:
+job          count
+---------  -------
+load_data        1
+total            1
+
+Select jobs to execute...
+
+[Mon Mar 17 18:29:00 2025]
+rule load_data:
+    input: data/dataset1/saint-latest.txt, data/dataset1/genesymbols_uniprotids_less_than_110.csv
+    output: data/dataset1/df_norm.csv
+    jobid: 0
+    reason: Missing output files: data/dataset1/df_norm.csv
+    resources: tmpdir=/var/folders/4l/lkwx3bk52l3f64_lrfgrjjwh0000gp/T
+
+[Mon Mar 17 18:29:06 2025]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: .snakemake/log/2025-03-17T182900.458110.snakemake.log

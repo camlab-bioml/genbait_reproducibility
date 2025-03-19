@@ -1,112 +1,148 @@
-import pandas as pd
-import numpy as np
 import os
-import igraph as ig
-import leidenalg
-from sklearn.metrics.cluster import adjusted_rand_score
-from sklearn.neighbors import kneighbors_graph
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import random
+from scipy import stats
+from statsmodels.stats.multitest import multipletests
+import itertools
 import pickle
-import concurrent.futures
-from concurrent.futures import ProcessPoolExecutor
-from matplotlib import cm
 import matplotlib
+
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 matplotlib.rcParams['figure.dpi'] = 300
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Arial']
 
-# Paths to the two datasets' results files
-results_file1 = '/Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/snakemake original gradient penalty/plots/leiden_results.pkl'
-results_file2 = '/Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/snakemake RNA Bodies gradient penalty/plots/leiden_results.pkl'
+def plot_leiden_combined(dataset_files, save_path, output_prefix):
+    """
+    Loads Leiden ARI results, performs statistical analysis, and generates boxplot visualization.
 
-# Load results from the first dataset
-with open(results_file1, 'rb') as f:
-    results1 = pickle.load(f)
+    Args:
+        dataset_files (list): List of dataset file paths containing Leiden ARI results.
+        output_prefix (str): Prefix for saving output files (e.g., "plots/leiden_ari").
+    """
 
-# Load results from the second dataset
-with open(results_file2, 'rb') as f:
-    results2 = pickle.load(f)
+    # Load results from all datasets
+    results_all = [pickle.load(open(file, 'rb')) for file in dataset_files]
 
-# Setup variables for method names
-method_names = ['GA', 'Random'] + list(results1['ML'].keys())
+    # Determine all methods
+    methods = ['GA', 'Random'] + list(results_all[0]['ML'].keys())
 
-# Aggregate scores for each method across both datasets
-aggregated_scores1 = {}
-aggregated_scores2 = {}
-for method in method_names:
-    if method in ['GA', 'Random']:
-        scores1 = [score for cluster in results1[method].values() for score in cluster.values()]
-        scores2 = [score for cluster in results2[method].values() for score in cluster.values()]
-    else:
-        scores1 = [score for cluster in results1['ML'][method].values() for score in cluster.values()]
-        scores2 = [score for cluster in results2['ML'][method].values() for score in cluster.values()]
-    aggregated_scores1[method] = [item for sublist in scores1 for item in sublist]
-    aggregated_scores2[method] = [item for sublist in scores2 for item in sublist]
+    # Aggregate scores for each method across datasets
+    aggregated_scores_all = {method: [] for method in methods}
+    aggregated_scores_per_dataset = [{} for _ in dataset_files]
 
-# Calculate median scores to sort methods
-median_scores1 = {method: np.median(scores) for method, scores in aggregated_scores1.items()}
-median_scores2 = {method: np.median(scores) for method, scores in aggregated_scores2.items()}
-average_medians = {method: (median_scores1[method] + median_scores2[method]) / 2 for method in method_names}
+    for i, results in enumerate(results_all):
+        for method in methods:
+            if method in ['GA', 'Random']:
+                scores = [score for cluster in results[method].values() for score_list in cluster.values() for score in score_list]
+            else:
+                scores = [score for cluster in results['ML'][method].values() for score_list in cluster.values() for score in score_list]
+            
+            aggregated_scores_all[method].extend(scores)
+            aggregated_scores_per_dataset[i][method] = scores
 
-# Sort methods based on average median score in descending order
-sorted_methods = sorted(average_medians, key=average_medians.get, reverse=True)
+    # Compute median scores
+    median_scores = {method: [np.median(aggregated_scores_per_dataset[i].get(method, [])) for i in range(len(dataset_files))] for method in methods}
+    average_medians = {method: np.nanmean(scores) for method, scores in median_scores.items()}
 
-# Generate boxplot data in sorted order for both datasets
-boxplot_data1 = [aggregated_scores1[method] for method in sorted_methods]
-boxplot_data2 = [aggregated_scores2[method] for method in sorted_methods]
+    # Perform pairwise Mann-Whitney U tests
+    method_pairs = list(itertools.combinations(aggregated_scores_all.keys(), 2))
+    p_values = []
+
+    for method1, method2 in method_pairs:
+        if aggregated_scores_all[method1] and aggregated_scores_all[method2]:  # Ensure lists are non-empty
+            _, p_value = stats.mannwhitneyu(aggregated_scores_all[method1], aggregated_scores_all[method2], alternative='two-sided')
+        else:
+            p_value = np.nan  # Assign NaN if one of the lists is empty
+        p_values.append((method1, method2, p_value))
+
+    # Apply multiple hypothesis correction (Benjamini-Hochberg)
+    method_names_1, method_names_2, raw_p_values = zip(*p_values)
+    adjusted_p_values = multipletests(raw_p_values, method='fdr_bh')[1]
+
+    # Save statistical significance results
+    stats_df = pd.DataFrame({'Method 1': method_names_1, 'Method 2': method_names_2, 'P-value': raw_p_values, 'Adjusted P-value': adjusted_p_values})
+    stats_df.to_csv(f'{save_path}{output_prefix}_statistical_significance.csv', index=False)
+
+    # Order methods
+    ordered_methods = ['GA', 'nn', 'rf', 'gbm', 'xgb', 'lasso', 'ridge', 'elastic_net', 'mutual_info_classif', 'f_classif', 'chi_2', 'Random']
+    sorted_methods = [method for method in ordered_methods if method in average_medians]
+
+    # Save median values
+    median_values_df = pd.DataFrame([(method, average_medians[method]) for method in sorted_methods], columns=['Method', 'Median Value'])
+    median_values_df.to_csv(f'{save_path}{output_prefix}_median_values.csv', index=False)
+
+    # Mapping method names for clarity
+    methods_name_mapping = {
+        'GA': 'GENBAIT',
+        'Random': 'Random',
+        'chi_2': 'Chi-Squared',
+        'f_classif': 'ANOVA F',
+        'mutual_info_classif': 'Mutual Info',
+        'lasso': 'Lasso',
+        'ridge': 'Ridge',
+        'elastic_net': 'ElasticNet',
+        'rf': 'RF',
+        'gbm': 'GBM',
+        'xgb': 'XGB',
+        'nn': 'Neural Network'
+    }
+
+    # Apply mapping to sorted_methods
+    mapped_sorted_methods = [methods_name_mapping.get(method, method) for method in sorted_methods]
+
+    # Plot visualization
+    fig, ax = plt.subplots(figsize=(12, 8))
+    positions = np.arange(len(mapped_sorted_methods))
+
+    colors = ['#F7941D', '#009444', '#FF5733']
+    flierprops = dict(marker='o', markersize=1)
+
+    all_data = []
+    for idx, method in enumerate(sorted_methods):
+        box_data = [aggregated_scores_per_dataset[i].get(method, []) for i in range(len(dataset_files))]
+        all_data.extend([val for dataset in box_data for val in dataset])
+
+        box_positions = [positions[idx] - 0.2, positions[idx], positions[idx] + 0.2]
+        for i in range(len(dataset_files)):
+            ax.boxplot(box_data[i], positions=[box_positions[i]], widths=0.18, patch_artist=True,
+                       boxprops=dict(facecolor=colors[i], color=colors[i]), medianprops=dict(color='black'), flierprops=flierprops)
+
+    # Determine the method with the highest average median
+    best_method = max(average_medians, key=average_medians.get)
+    best_method_position = sorted_methods.index(best_method)
+
+    # Highlight the best method
+    plt.axvspan(best_method_position - 0.5, best_method_position + 0.5, color='#B9B9B5', alpha=0.3)
+
+    ax.set_xticks(positions)
+    ax.set_xticklabels(mapped_sorted_methods, rotation=90, ha='center', fontsize=18)
+    ax.set_ylabel('Leiden ARI score', fontsize=18)
+
+    plt.legend(handles=[
+        mpatches.Patch(color=colors[0], label='Dataset 1'),
+        mpatches.Patch(color=colors[1], label='Dataset 2'),
+        mpatches.Patch(color=colors[2], label='Dataset 3')
+    ], loc='lower right', fontsize=18)
+
+    plt.tight_layout()
+    plt.ylim(min(all_data), max(all_data))
+
+    # Save plots
+    plt.savefig(f'{save_path}{output_prefix}_comparison.png', dpi=300)
+    plt.savefig(f'{save_path}{output_prefix}_comparison.svg', dpi=300)
+    plt.savefig(f'{save_path}{output_prefix}_comparison.pdf', dpi=300)
+    plt.clf()
 
 
-# Rename methods and columns for clarity
-methods_name_mapping = {
-    'GA': 'GA',
-    'Random': 'Random',
-    'chi_2': 'Chi-Squared',
-    'f_classif': 'ANOVA F',
-    'mutual_info_classif': 'Mutual Info',
-    'lasso': 'Lasso',
-    'ridge': 'Ridge',
-    'elastic_net': 'ElasticNet',
-    'rf': 'RF',
-    'gbm': 'GBM',
-    'xgb': 'XGB'
-}
-
-# Apply mapping to sorted_methods
-mapped_sorted_methods = [methods_name_mapping.get(method, method) for method in sorted_methods]
-
-fig, ax = plt.subplots(figsize=(15, 6))
-positions = np.arange(0, len(mapped_sorted_methods) * 1, 1)  
-
-outlier_props = dict(marker='o', markersize=2)
-
-for idx, method in enumerate(sorted_methods):
-    data1 = boxplot_data1[idx]
-    data2 = boxplot_data2[idx]
-    # Position adjustments to align boxes side by side
-    box_positions = [positions[idx] - 0.15, positions[idx] + 0.15]
-    bplot1 = ax.boxplot(data1, positions=[box_positions[0]], widths=0.3, patch_artist=True,
-                        boxprops=dict(facecolor='lightblue'), medianprops=dict(color='black'), flierprops=outlier_props)
-    bplot2 = ax.boxplot(data2, positions=[box_positions[1]], widths=0.3, patch_artist=True,
-                        boxprops=dict(facecolor='green'), medianprops=dict(color='black'), flierprops=outlier_props)
-
-# Customize axes and layout
-ax.set_xticks(positions)
-ax.set_xticklabels([mapped_sorted_methods[idx].replace('ML_', '') for idx in range(len(mapped_sorted_methods))], rotation=90, ha='center', fontsize=16)
-ax.set_ylabel('Leiden ARI score', fontsize=16)
-legend_handles = [
-    mpatches.Patch(color='lightblue', label='Dataset 1'),
-    mpatches.Patch(color='green', label='Dataset 2')
+# Example usage
+dataset_files = [
+    '/Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/snakemake original gradient penalty/plots/leiden_results.pkl',
+    '/Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/snakemake RNA Bodies gradient penalty/plots/leiden_results.pkl',
+    '/Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/snakemake nuclear Bodies gradient penalty/plots/leiden_results.pkl'
 ]
-plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
-plt.tight_layout()
-plt.ylim(0,1)
-# plt.show()
 
-plt.savefig('plots/leiden_comparison.png', dpi=300)
-plt.savefig('plots/leiden_comparison.svg', dpi=300)
-plt.savefig('plots/leiden_comparison.pdf', dpi=300)
-plt.clf()
+plot_leiden_combined(dataset_files, "plots/leiden_ari")
