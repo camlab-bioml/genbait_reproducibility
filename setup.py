@@ -5,7 +5,7 @@ setup(
     version="0.1.0",
     author="Your Name",
     author_email="vesal.kasmaeifar@mail.utoronto.ca",
-    description="GENBAIT: A bioinformatics tool for bait selection",
+    description="GENBAIT reproducibility: A bioinformatics tool for bait selection",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/vesalkasmaeifar/genbait_reproducibility",
@@ -23,7 +23,10 @@ setup(
         "seaborn",
         "argparse",
         "pyyaml",
+        "gprofiler",
         "deap",
+        "pytorch_lightning",
+        "XGBoost",
     ],
     entry_points={
         "console_scripts": [
@@ -35,5 +38,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.9",
 )
