@@ -1,6 +1,10 @@
 # GENBAIT Reproducibility
 
-This repository contains the GENBAIT project for bait selection in BioID experiments. This project is designed to be reproducible using Snakemake. Below are the instructions on how to reproduce the results of each step in the workflow using the provided configuration files.
+This repository contains the GENBAIT project for bait selection in BioID experiments. 
+
+A **preprint** describing the method and introducing a novel benchmarking platform is available: [Kasmaeifar et al. (2024) _Computational design and evaluation of optimal bait sets for scalable proximity proteomics_](https://www.biorxiv.org/content/10.1101/2024.10.03.616533v1)
+
+This project is designed to be reproducible using Snakemake. Below are the instructions on how to reproduce the results of each step in the workflow using the provided configuration files.
 
 ## Requirements
 
@@ -33,108 +37,114 @@ This will install the package along with all required dependencies.
 
 
 ## Running the Workflow
-You can reproduce the results for each dataset by running the Snakemake workflow. The configuration files for dataset1 and dataset2 are provided in the config directory.
+To reproduce the results for each dataset, run the Snakemake workflow. The configuration files for each dataset are located in the `config/` directory.
 
-
-### Load data
 ```sh
-snakemake --cores 1 data/dataset1/df_norm.csv --configfile config/config_dataset1.yaml
-snakemake --cores 1 data/dataset2/df_norm.csv --configfile config/config_dataset2.yaml
-```
+# Example: Load data step for dataset1 using all available CPU cores
+snakemake --cores all load_data --config dataset=dataset1
 
-### Run genetic algorithm
-```sh
-snakemake --cores 1 results/dataset1/GA_results/popfile.pkl --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/GA_results/popfile.pkl --configfile config/config_dataset2.yaml
-```
+# 1. Load data
+snakemake --cores 1 load_data
 
-### Get genetic algorithm results
-```sh
-snakemake --cores 1 results/dataset1/plots/GA_vs_Random_plot.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/GA_vs_Random_plot.png --configfile config/config_dataset2.yaml
-```
 
-### Run genetic algorithm with different number of baits and seeds
-```sh
-snakemake --cores 1 results/dataset1/GA_number_of_baits_seeds/popfile_features_{num_features}_seed_{seed}.pkl --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/GA_number_of_baits_seeds/popfile_features_{num_features}_seed_{seed}.pkl --configfile config/config_dataset2.yaml
-```
+# 2. GENBAIT evaluation
 
-### Visualize results for different number of baits and seeds
-```sh
-snakemake --cores 1 results/dataset1/plots/nbaits_vs_max_value_seeds_boxplot_GA.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/nbaits_vs_max_value_seeds_boxplot_GA.png --configfile config/config_dataset2.yaml
-```
+# Run the Genetic Algorithm (GA)
+snakemake --cores 1 run_ga
 
-### Run machine learning methods
-```sh
-snakemake --cores 1 results/dataset1/plots/ml_correlation_plot_averaged.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/ml_correlation_plot_averaged.png --configfile config/config_dataset2.yaml
-```
+# Evaluation
+snakemake --cores 1 ga_evaluation
 
-### Plot NMF scores
-```sh
-snakemake --cores 1 results/dataset1/plots/nmf_scores_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/nmf_scores_vs_each_method.png --configfile config/config_dataset2.yaml
-```
+# Run GENBAIT for different bait lenghts and seeds
+snakemake --cores 1 ga_number_of_baits_seeds
 
-### Plot NMF Cosine similarity scores
-```sh
-snakemake --cores 1 results/dataset1/plots/nmf_cos_scores_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/nmf_cos_scores_vs_each_method.png --configfile config/config_dataset2.yaml
-```
+# Bait lengths and seeds evaluation
+snakemake --cores 1 seeds_evaluation
 
-### Plot NMF KL Divergence scores
-```sh
-snakemake --cores 1 results/dataset1/plots/nmf_kl_scores_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/nmf_kl_scores_vs_each_method.png --configfile config/config_dataset2.yaml
-```
 
-### Plot NMF ARI
-```sh
-snakemake --cores 1 results/dataset1/plots/nmf_ari_values_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/nmf_ari_values_vs_each_method.png --configfile config/config_dataset2.yaml
-```
+# 3. Machine learning feature selection
 
-### Plot NMF GO Jaccard index
-```sh
-snakemake --cores 1 results/dataset1/plots/nmf_go_components_scores_values_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/nmf_go_components_scores_values_vs_each_method.png --configfile config/config_dataset2.yaml
-```
+# Run ML Methods
+snakemake --cores 1 run_ml_methods
 
-### Plot remaining preys percentage
-```sh
-snakemake --cores 1 results/dataset1/plots/remaining_preys_vs_each_method_sorted.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/remaining_preys_vs_each_method_sorted.png --configfile config/config_dataset2.yaml
-```
+# Plot ML Methods
+snakemake --cores 1 plot_ml_methods
 
-### Plot GO retrieval percentage
-```sh
-snakemake --cores 1 results/dataset1/plots/GO_terms_retrieval_percentage_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/GO_terms_retrieval_percentage_vs_each_method.png --configfile config/config_dataset2.yaml
-```
 
-### Plot Leiden ARI 
-```sh
-snakemake --cores 1 results/dataset1/plots/Leiden_ARI_values_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/Leiden_ARI_values_vs_each_method.png --configfile config/config_dataset2.yaml
-```
+# 4. NMF metrics rules
 
-### Plot GMM ARI
-```sh
-snakemake --cores 1 results/dataset1/plots/GMM_ARI_values_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/GMM_ARI_values_vs_each_method.png --configfile config/config_dataset2.yaml
-```
+# Mean NMF correlation
+snakemake --cores 1 plot_nmf_scores
 
-### Plot GMM mean correlation
-```sh
-snakemake --cores 1 results/dataset1/plots/GMM_mean_correlation_values_vs_each_method.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/GMM_mean_correlation_values_vs_each_method.png --configfile config/config_dataset2.yaml
-```
+# Min NMF correlation
+snakemake --cores 1 plot_nmf_scores_min
 
-### Plot combined metrics
-```sh
-snakemake --cores 1 results/dataset1/plots/combined_metrics_comparison_plot.png --configfile config/config_dataset1.yaml
-snakemake --cores 1 results/dataset2/plots/combined_metrics_comparison_plot.png --configfile config/config_dataset2.yaml
-```
+# Mean NMF Cosine similarity
+snakemake --cores 1 plot_nmf_cos_scores
 
+# Min NMF Cosine similarity
+snakemake --cores 1 plot_nmf_cos_scores_min
+
+# Mean NMF KL divergence
+snakemake --cores 1 plot_nmf_kl_scores
+
+# Max NMF KL divergence
+snakemake --cores 1 plot_nmf_kl_scores_min
+
+# NMF ARI
+snakemake --cores 1 plot_nmf_ari_scores
+
+# Min NMF purity score
+snakemake --cores 1 plot_nmf_ari_scores_min
+
+# Mean NMF Jaccard GO index
+snakemake --cores 1 plot_nmf_go_scores
+
+# Min NMF Jaccard GO index
+snakemake --cores 1 plot_nmf_go_scores_min
+
+
+# 5. Non-NMF metrics rules
+
+# Remaining preys percentage
+snakemake --cores 1 remaining_preys_evaluation
+
+# GO retrieval percentage
+snakemake --cores 1 go_evaluation
+
+# Leiden ARI
+snakemake --cores 1 leiden_evaluation
+
+# GMM ARI
+snakemake --cores 1 gmm_hard_evaluation
+
+# Mean GMM correlation
+snakemake --cores 1 gmm_evaluation
+
+# Combined metrics plot
+snakemake --cores 1 combined_metrics
+
+
+# 6. Other analyses rules 
+
+# Topology analysis
+snakemake --cores 1 topology_analysis
+
+# Runtime analysis
+snakemake --cores 1 runtime_analysis
+
+# Individual components correlation
+snakemake --cores 1 individual_components_correlation
+
+
+# 7. Dataset1-specific analysis
+
+# Bait expression analysis
+snakemake --cores 1 bait_expression_analysis
+
+# Simulation expression analysis
+snakemake --cores 1 simulation_expression_analysis
+
+
+# 8. Final step: mark workflow as completed
+snakemake --cores 1 finalize_workflow
