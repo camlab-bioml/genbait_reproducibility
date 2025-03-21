@@ -1,3 +1,0 @@
-NameError in file /Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/genbait_reproducibility/Snakefile, line 37:
-name 'wildcards' is not defined
-  File "/Users/vesalkasmaeifar/vesal/PhD_Project/cell map/scripts/Bait selection/genbait_reproducibility/Snakefile", line 37, in <module>
