@@ -1,6 +1,6 @@
 # GENBAIT Reproducibility
 
-This repository contains the GENBAIT project for bait selection in BioID experiments. 
+This repository contains the results of all analyses in GENBAIT project for bait selection in BioID experiments. 
 
 A **preprint** describing the method and introducing a novel benchmarking platform is available: [Kasmaeifar et al. (2024) _Computational design and evaluation of optimal bait sets for scalable proximity proteomics_](https://www.biorxiv.org/content/10.1101/2024.10.03.616533v1)
 
@@ -12,7 +12,7 @@ Before running the workflow, ensure you have the following installed:
 
 - [Python 3.10+](https://www.python.org/downloads/)
 - [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
-- [Git LFS](https://git-lfs.github.com/) (for handling large files)
+- [Git LFS](https://git-lfs.github.com/)
 
 
 ## Setup
