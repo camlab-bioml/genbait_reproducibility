@@ -25,6 +25,7 @@ setup(
         "pyyaml",
         "gprofiler",
         "deap",
+        "torch",
         "pytorch_lightning",
         "XGBoost",
     ],
