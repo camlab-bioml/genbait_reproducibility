@@ -19,6 +19,38 @@ Before running the workflow, ensure you have the following installed:
 
 ---
 
+## Git Installation
+
+To install GENBAIT, you first need Git. Follow the instructions below to install Git on your system.
+
+### For Windows
+
+1. **Download the Git installer**:
+   - Go to the official Git website: [https://git-scm.com/download/win](https://git-scm.com/download/win).
+   - Download the latest installer for Windows.
+
+2. **Run the installer**:
+   - Locate the downloaded file and double-click to open the installer.
+   - Follow the prompts in the setup wizard. You can keep the default options or customize the installation.
+
+### For macOS
+
+1. **Install Git using Homebrew**:
+   - If you have **Homebrew** installed, open the **Terminal** and run:
+     ```bash
+     brew install git
+     ```
+   - Homebrew will handle the download and installation of Git.
+
+2. **Verify the installation**:
+   - In **Terminal**, type the following command and press Enter:
+     ```bash
+     git --version
+     ```
+   - You should see a Git version number, confirming that Git is installed.
+
+---
+
 ## Build Tools Installation
 
 Some packages used in this repository (e.g., `shap`, `xgboost`, `leidenalg`) require compilation and system build tools.
