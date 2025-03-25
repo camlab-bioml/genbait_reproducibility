@@ -178,6 +178,51 @@ snakemake --cores 1 bait_expression_analysis
 # Simulation expression analysis
 snakemake --cores 1 simulation_expression_analysis
 
+# 8. Cobined datasets plots
+# Comined mean NMF correlation
+snakemake --cores 1 combined_nmf_corr
 
-# 8. Final step: mark workflow as completed
+# Comined min NMF correlation
+snakemake --cores 1 combined_nmf_min_corr
+
+# Comined mean NMF Cosine similarity
+snakemake --cores 1 combined_nmf_cos
+
+# Comined min NMF Cosine similarity
+snakemake --cores 1 combined_nmf_min_cos
+
+# Comined mean NMF KL divergence
+snakemake --cores 1 combined_nmf_kl
+
+# Comined min NMF KL divergence
+snakemake --cores 1 combined_nmf_min_kl
+
+# Comined NMF ARI
+snakemake --cores 1 combined_nmf_ari
+
+# Comined min NMF purity score
+snakemake --cores 1 combined_nmf_min_purity
+
+# Comined mean NMF go
+snakemake --cores 1 combined_nmf_go
+
+# Comined min NMF go
+snakemake --cores 1 combined_nmf_min_go
+
+# Combined remaining preys
+snakemake --cores 1 combined_remaining_preys
+
+# Combined GO retrieval 
+snakemake --cores 1 combined_go_retrieval
+
+# Combined Leiden ARI
+snakemake --cores 1 combined_leiden
+
+# Combined GMM ARI
+snakemake --cores 1 combined_gmm_hard
+
+# Combined mean GMM correlation
+snakemake --cores 1 combined_gmm_correlation
+
+# 9. Final step: mark workflow as completed
 snakemake --cores 1 finalize_workflow
