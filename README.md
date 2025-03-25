@@ -47,7 +47,6 @@ Some packages used in this repository (e.g., `shap`, `xgboost`, `leidenalg`) req
    ```bash
    xcode-select --install
 
-
 ## Setup
 
 ### Create a Virtual Environment
