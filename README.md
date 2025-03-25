@@ -1,10 +1,13 @@
 # GENBAIT Reproducibility
 
-This repository contains the results of all analyses in GENBAIT project for bait selection in BioID experiments. 
+This repository contains the results of all analyses in the GENBAIT project for bait selection in BioID experiments. 
 
-A **preprint** describing the method and introducing a novel benchmarking platform is available: [Kasmaeifar et al. (2024) _Computational design and evaluation of optimal bait sets for scalable proximity proteomics_](https://www.biorxiv.org/content/10.1101/2024.10.03.616533v1)
+A **preprint** describing the method and introducing a novel benchmarking platform is available:  
+[Kasmaeifar et al. (2024) _Computational design and evaluation of optimal bait sets for scalable proximity proteomics_](https://www.biorxiv.org/content/10.1101/2024.10.03.616533v1)
 
 This project is designed to be reproducible using Snakemake. Below are the instructions on how to reproduce the results of each step in the workflow using the provided configuration files.
+
+---
 
 ## Requirements
 
@@ -13,6 +16,36 @@ Before running the workflow, ensure you have the following installed:
 - [Python 3.10+](https://www.python.org/downloads/)
 - [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html)
 - [Git LFS](https://git-lfs.github.com/)
+
+---
+
+## Build Tools Installation
+
+Some packages used in this repository (e.g., `shap`, `xgboost`, `leidenalg`) require compilation and system build tools.
+
+### For Windows
+
+1. **Download Microsoft C++ Build Tools**:  
+   [https://visualstudio.microsoft.com/visual-cpp-build-tools/](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+
+2. **In the installer, select the following**:
+   - **C++ build tools** workload
+   - **MSVC v14 or later**
+   - **Windows 10 or 11 SDK**
+
+3. Complete the installation and **restart your terminal**.
+
+> If these tools are missing, you may encounter errors such as:  
+> `error: Microsoft Visual C++ 14.0 or greater is required`
+
+---
+
+### For macOS
+
+1. **Install Xcode Command Line Tools**:  
+   Open Terminal and run:
+   ```bash
+   xcode-select --install
 
 
 ## Setup

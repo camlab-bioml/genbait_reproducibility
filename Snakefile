@@ -187,7 +187,7 @@ rule plot_nmf_go_scores_min:
 
 
 # ====================================
-#  STEP 5: NON-NMF METRICS RULES (PER DATASET)
+#  STEP 5: NON-NMF METRICS RULES 
 # ====================================
 
 rule remaining_preys_evaluation:
@@ -244,7 +244,7 @@ rule combined_metrics:
 
 
 # ====================================
-#  STEP 6: OTHER ANALYSES RULES (PER DATASET)
+#  STEP 6: OTHER ANALYSES RULES 
 # ====================================
 rule topology_analysis:
     input:
@@ -274,13 +274,12 @@ rule individual_components_correlation:
         "python3 src/main.py --step individual_components_correlation --config config/config_{dataset}.yaml"
 
 
-
 # ====================================
-#  STEP 15: DATASET1-SPECIFIC STEPS
+#  STEP 7: DATASET1-SPECIFIC STEPS
 # ====================================
 rule bait_expression_analysis:
     input:
-        Cload_data_output=rules.load_data.output,
+        load_data_output=rules.load_data.output,
     output:
         CONFIGS["dataset1"]["plots_path"] + "bait_expression_analysis.png"
     shell:
@@ -293,6 +292,132 @@ rule simulation_expression_analysis:
         CONFIGS["dataset1"]["plots_path"] + "simulation_expression_analysis.png"
     shell:
         "python3 src/main.py --step simulation_expression_analysis --config config/config_dataset1.yaml"
+
+
+### RUN THIS AFTER RUNNING THE PREVIOUS RULES FOR ALL OTHER DATASETS ###
+# ====================================
+#  STEP 8: COMBINED DATASETS PLOTS
+# ====================================
+rule combined_nmf_corr:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_corr --config config/config_{dataset}.yaml"
+
+rule combined_nmf_min_corr:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_min_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_min_corr --config config/config_{dataset}.yaml"
+
+rule combined_nmf_cos:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_cos_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_cos --config config/config_{dataset}.yaml"
+
+rule combined_nmf_min_cos:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_cos_min_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_min_cos --config config/config_{dataset}.yaml"
+
+rule combined_nmf_kl:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_kl_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_kl --config config/config_{dataset}.yaml"
+
+rule combined_nmf_min_kl:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_kl_min_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_min_kl --config config/config_{dataset}.yaml"
+
+rule combined_nmf_ari:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_ari_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_ari --config config/config_{dataset}.yaml"
+
+rule combined_nmf_min_purity:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_ari_min_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_min_purity --config config/config_{dataset}.yaml"
+
+rule combined_nmf_go:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_go_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_go --config config/config_{dataset}.yaml"
+
+rule combined_nmf_min_go:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "nmf_scores_go_min_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_nmf_min_go --config config/config_{dataset}.yaml"
+
+rule combined_remaining_preys:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "remaining_preys_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_remaining_preys --config config/config_{dataset}.yaml"
+
+rule combined_go_retrieval:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "GO_retrieval_percentage_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_go_retrieval --config config/config_{dataset}.yaml"
+
+rule combined_leiden:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "leiden_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_leiden --config config/config_{dataset}.yaml"
+
+rule combined_gmm_hard:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "gmm_hard_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_gmm_hard --config config/config_{dataset}.yaml"
+
+rule combined_gmm_correlation:
+    input:
+        load_data_output=rules.load_data.output,
+    output:
+        CONFIGS[dataset]["plots_path"] + "gmm_correlation_comparison.png"
+    shell:
+        "python3 src/main.py --step combined_gmm_correlation --config config/config_{dataset}.yaml"
+
 
 # ====================================
 #  FINAL STEP: MARK WORKFLOW AS COMPLETED
