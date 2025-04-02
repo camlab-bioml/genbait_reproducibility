@@ -39,7 +39,7 @@ from plot_combined_metrics import create_combined_metrics_plot
 from plot_runtime_analysis import plot_runtime_analysis
 from plot_individual_components_bait_size import plot_individual_components_vs_bait_sizes
 from plot_topology_metrics import plot_topology_metrics
-from cell_line_data_simulator_baits import plot_baits_expression_level_comparison
+from cell_line_data_simulator_baits import plot_baits_expression_heatmap
 from cell_line_data_simulator_preys import generate_simulated_expression_data
 from get_proteomicsdb_cell_line_data import get_cellline_data
 from plot_nmf_scores_cmbined_datasets import plot_nmf_correlation_combined
@@ -375,13 +375,11 @@ def main():
 
     elif args.step == 'bait_expression_analysis': # ONLY FOR DATASET 1
         cell = 'hela'
-        plot_baits_expression_level_comparison(
-            bait_file="top_features_GA_seeds/top_1_features_50_seed_0.csv",
-            hek293_pickle=CONFIG['cell_lines_path']+"HEK-293_expression_normalized.pkl",
-            cell_pickle=f"{CONFIG['cell_lines_path']}+{cell}_expression_normalized.pkl",
+        plot_baits_expression_heatmap(
+            bait_file=f"{CONFIG['top_features_GA_seeds_path']}top_1_features_50_seed_0.csv",
             uniprot_mapping_pickle=CONFIG['plots_path']+'uniprot_mapping.pkl',
-            output_file=f"{CONFIG['plots_path']}baits_expression_levels_plot_{cell}.pdf",
-            cell_line=cell
+            expression_dir=CONFIG['cell_lines_path'],
+            output_dir=CONFIG['plots_path']
         )
 
     elif args.step == 'combined_nmf_corr':

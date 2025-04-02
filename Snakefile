@@ -281,7 +281,7 @@ rule bait_expression_analysis:
     input:
         load_data_output=rules.load_data.output,
     output:
-        CONFIGS["dataset1"]["plots_path"] + "bait_expression_analysis.png"
+        CONFIGS["dataset1"]["plots_path"] + "baits_expression_heatmap.pdf"
     shell:
         "python3 src/main.py --step bait_expression_analysis --config config/config_dataset1.yaml"
 
