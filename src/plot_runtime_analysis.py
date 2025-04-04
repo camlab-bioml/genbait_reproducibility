@@ -436,8 +436,9 @@ def plot_runtime_analysis(df_norm, save_path):
     plt.xlabel("Bait Length")
     plt.ylabel("Runtime (Seconds)")
     plt.title("Feature Selection Runtime Across Methods")
+    plt.yscale("log", base=10)
     plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
-    plt.grid(True)
+    # plt.grid(True)
     plt.tight_layout()
 
     plot_file = f"{save_path}/runtime_plot.pdf"
