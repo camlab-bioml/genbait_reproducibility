@@ -1,0 +1,41 @@
+Bait,Compartment1,Compartment2
+TJP1,cell junction,
+TJP2,cell junction,
+HIST1H3A,chromatin,
+ASF1A,chromatin,
+SSR1,ER membrane,
+SEC61B_Nterm,ER membrane,
+CS,mitochondrial matrix,
+PDHA1,mitochondrial matrix,
+ACTB,actin cytoskeleton, cytosol
+PFN1,actin cytoskeleton, cytosol
+CALR3,ER lumen,
+CALU,ER lumen,
+LAMP1,endosome, lysosme
+LAMP2,endosome, lysosme
+FBL,nucleolus,
+NOP56,nucleolus,
+PARP1,nucleoplasm,
+NPM1,nucleoplasm,
+COIL,nuclear body,
+NIFK,nuclear body,
+CAV1,plasma membrane,
+CXADR,plasma membrane,
+PCM1,centrosome,
+SASS6,centrosome,
+PEX3,mitochondrial outer membrane, peroxisome
+PEX14,mitochondrial outer membrane, peroxisome
+GOLGA1,Golgi appratus,
+GOLGA2,Golgi appratus,
+LMNB1,nuclear outer membrane-ER membrane network,
+LNPK_Nterm,nuclear outer membrane-ER membrane network,
+SERBP1,cytoplasmic ribonucleoprotein granule,
+NCBP3,cytoplasmic ribonucleoprotein granule,
+TUBA1A,microtubule cytoskeleton,
+TUBB,microtubule cytoskeleton,
+COX4I1,mitochondrial inner membrane, mitochondrial intermembrane space
+COX8A_target,mitochondrial inner membrane, mitochondrial intermembrane space
+BORCS6,miscellaneous,
+MARCKS,miscellaneous,
+RAB4A,early endosome, recycling endosome
+RAB11A,early endosome, recycling endosome

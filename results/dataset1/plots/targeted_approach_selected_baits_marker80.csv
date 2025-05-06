@@ -1,0 +1,81 @@
+Bait,Compartment1,Compartment2
+TJP1,cell junction
+TJP2,cell junction
+CTNNA1,cell junction
+OCLN,cell junction
+HIST1H3A,chromatin
+ASF1A,chromatin
+CENPA,chromatin
+KDM1A,chromatin
+SSR1,ER membrane
+SEC61B_Nterm,ER membrane
+SEC62,ER membrane
+RPN2,ER membrane
+CS,mitochondrial matrix
+PDHA1,mitochondrial matrix
+AIFM1,mitochondrial matrix
+# (Fourth marker for matrix not clearly in the list; you could skip or reuse one from inner membrane)
+ACTB,actin cytoskeleton, cytosol
+PFN1,actin cytoskeleton, cytosol
+ACTR2,actin cytoskeleton, cytosol
+VASP,actin cytoskeleton, cytosol
+CALR3,ER lumen
+CALU,ER lumen
+PDIA4,ER lumen
+# (Fourth for pure ER lumen not in your list)
+LAMP1,endosome, lysosme
+LAMP2,endosome, lysosme
+RAB5A,endosome, lysosme
+RAB9A,endosome, lysosme
+FBL,nucleolus
+NOP56,nucleolus
+NPM1,nucleolus
+# (Fourth nucleolar marker not in your list)
+PARP1,nucleoplasm
+HNRNPA1,nucleoplasm
+PRPF8,nucleoplasm
+# (Fourth for strictly nucleoplasm not in your list; many are used in nuclear body)
+COIL,nuclear body
+NIFK,nuclear body
+TERF2IP,nuclear body
+# (Fourth nuclear body marker also not in your list)
+CAV1,plasma membrane
+CXADR,plasma membrane
+GJA1,plasma membrane
+GJD3,plasma membrane
+PCM1,centrosome
+SASS6,centrosome
+STIL,centrosome
+CEP135,centrosome
+PEX3,mitochondrial outer membrane, peroxisome
+PEX14,mitochondrial outer membrane, peroxisome
+AKAP1,mitochondrial outer membrane, peroxisome
+ACBD5,mitochondrial outer membrane, peroxisome
+GOLGA1,Golgi appratus
+GOLGA2,Golgi appratus
+GORASP1,Golgi appratus
+# (Fourth Golgi protein not in your list)
+LMNB1,nuclear outer membrane-ER membrane network
+LNPK_Nterm,nuclear outer membrane-ER membrane network
+SYNE3_Nterm,nuclear outer membrane-ER membrane network
+# (Fourth also not in your list)
+SERBP1,cytoplasmic ribonucleoprotein granule
+NCBP3,cytoplasmic ribonucleoprotein granule
+RPS6,cytoplasmic ribonucleoprotein granule
+RPS20,cytoplasmic ribonucleoprotein granule
+TUBA1A,microtubule cytoskeleton
+TUBB,microtubule cytoskeleton
+MAPRE1,microtubule cytoskeleton
+MAPRE3,microtubule cytoskeleton
+COX4I1,mitochondrial inner membrane, mitochondrial intermembrane space
+COX8A_target,mitochondrial inner membrane, mitochondrial intermembrane space
+SFXN1,mitochondrial inner membrane, mitochondrial intermembrane space
+TRAP1,mitochondrial inner membrane, mitochondrial intermembrane space
+BORCS6,miscellaneous
+MARCKS,miscellaneous
+VIM,miscellaneous
+GFAP,miscellaneous
+RAB4A,early endosome, recycling endosome
+RAB11A,early endosome, recycling endosome
+RAB35,early endosome, recycling endosome
+RAB2A,early endosome, recycling endosome
