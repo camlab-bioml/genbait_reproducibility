@@ -423,7 +423,7 @@ def compute_nmf_correlation(selected_baits, df_norm, number_of_components=20):
 
         # Calculating correlation matrix
         corr_matrix = np.corrcoef(basis_matrix_original, basis_matrix_subset_reordered, rowvar=False)[:number_of_components, number_of_components:]
-        return np.min(np.diag(corr_matrix))
+        return np.mean(np.diag(corr_matrix))
 
     return np.nan  # Return NaN if there are not enough selected baits
 
@@ -1250,14 +1250,18 @@ for length in bait_lengths:
     highest_scores_proportional.append(score)
 nmf_scores["High-yield baits proportional"] = highest_scores_proportional
 
-# Compute for literature-based markers
+
+# Load the combined bait list file
+marker_df = pd.read_csv("literature_selected_baits_all_lengths.csv")
+# Compute for literature-based markers from the single file
 literature_scores = []
+
 for length in bait_lengths:
-    marker_df = pd.read_csv(f"targeted_approach_selected_baits_marker{length}.csv")
-    selected_baits = marker_df["Bait"].dropna().tolist()
+    selected_baits = marker_df[str(length)].dropna().tolist()
     score = function_to_use(selected_baits, df_norm)
-    
     literature_scores.append(score)
+
+# Add the scores to the results
 nmf_scores["Literature Baits"] = literature_scores
 
 # Convert to DataFrame for plotting
