@@ -44,4 +44,4 @@ final_df = pd.DataFrame({
 })
 
 # Save to CSV
-final_df.to_csv("manual_A_selection_panels.csv", index=False)
+final_df.to_csv("targeted_approach_selected_baits_highest_number_of_preys_proportional.csv", index=False)

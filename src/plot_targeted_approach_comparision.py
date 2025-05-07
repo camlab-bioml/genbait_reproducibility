@@ -370,16 +370,16 @@ def feature_selection_methods(df_norm, seed=4):
         genbait_baits = df_80_20.index[genbait_selected_indices]
 
         # Store selected baits
-        all_selected_baits[f'Chi2_{k}'] = chi2_baits
-        all_selected_baits[f'F_classif_{k}'] = f_classif_baits
-        all_selected_baits[f'Mutual_Info_{k}'] = mutual_info_baits
+        all_selected_baits[f'Chi-squared{k}'] = chi2_baits
+        all_selected_baits[f'ANOVA F_{k}'] = f_classif_baits
+        all_selected_baits[f'Mutual info_{k}'] = mutual_info_baits
         all_selected_baits[f'Lasso_{k}'] = lasso_baits
         all_selected_baits[f'Ridge_{k}'] = ridge_baits
-        all_selected_baits[f'Elastic_Net_{k}'] = elastic_net_baits
-        all_selected_baits[f'Random_Forest_{k}'] = rf_baits
-        all_selected_baits[f'Gradient_Boosting_{k}'] = gbm_baits
-        all_selected_baits[f'XGBoost_{k}'] = xgb_baits
-        all_selected_baits[f'Neural_Network_{k}'] = nn_baits
+        all_selected_baits[f'ElasticNet_{k}'] = elastic_net_baits
+        all_selected_baits[f'RF_{k}'] = rf_baits
+        all_selected_baits[f'GBM_{k}'] = gbm_baits
+        all_selected_baits[f'XGB_{k}'] = xgb_baits
+        all_selected_baits[f'Neural network_{k}'] = nn_baits
         all_selected_baits[f'GENBAIT_{k}'] = genbait_baits
 
     # Save selected baits as CSV
@@ -423,7 +423,7 @@ def compute_nmf_correlation(selected_baits, df_norm, number_of_components=20):
 
         # Calculating correlation matrix
         corr_matrix = np.corrcoef(basis_matrix_original, basis_matrix_subset_reordered, rowvar=False)[:number_of_components, number_of_components:]
-        return np.mean(np.diag(corr_matrix))
+        return np.min(np.diag(corr_matrix))
 
     return np.nan  # Return NaN if there are not enough selected baits
 
@@ -768,7 +768,7 @@ def compute_nmf_go_jaccard(selected_baits, df_norm, number_of_components=20, ran
         jaccard_indices.append(jaccard_index)
 
     # Step 11: Compute mean Jaccard index
-    mean_jaccard_index = np.min(jaccard_indices) if jaccard_indices else 0
+    mean_jaccard_index = np.mean(jaccard_indices) if jaccard_indices else 0
 
     return mean_jaccard_index
 
@@ -1215,13 +1215,13 @@ highest_preys = pd.read_csv("targeted_approach_selected_baits_highest_number_of_
 highest_preys_proportional = pd.read_csv("targeted_approach_selected_baits_highest_number_of_preys_proportional.csv")
 
 number_of_components = 20
-function_to_use = compute_nmf_correlation
+function_to_use = compute_gmm_correlation
 
 
 # Dictionary to store NMF correlation scores for each method
 nmf_scores = {}
 
-methods = ['Chi2','F_classif','Mutual_Info','Lasso','Ridge','Elastic_Net','Random_Forest','Gradient_Boosting','XGBoost','Neural_Network','GENBAIT']
+methods = ['Chi-squared','ANOVA F','Mutual info','Lasso','Ridge','ElasticNet','RF','GBM','XGB','Neural network','GENBAIT']
 # Compute for all developed methods
 for method in methods:  # Get unique method names
     method_scores = []
@@ -1239,7 +1239,7 @@ for length in bait_lengths:
     selected_baits = highest_preys[str(length)].dropna().tolist()
     score = function_to_use(selected_baits, df_norm)
     highest_scores.append(score)
-nmf_scores["High-yield baits"] = highest_scores
+nmf_scores["High-yield (global)"] = highest_scores
 
 
 # Compute for highest number of preys
@@ -1248,21 +1248,63 @@ for length in bait_lengths:
     selected_baits = highest_preys_proportional[str(length)].dropna().tolist()
     score = function_to_use(selected_baits, df_norm)
     highest_scores_proportional.append(score)
-nmf_scores["High-yield baits proportional"] = highest_scores_proportional
+nmf_scores["High-yield (proportional)"] = highest_scores_proportional
 
+
+# # Load the combined bait list file
+# marker_df = pd.read_csv("literature_selected_baits_all_lengths_Saya_manual.csv")
+# # Compute for literature-based markers from the single file
+# literature_scores_a = []
+
+# for length in bait_lengths:
+#     selected_baits = marker_df[str(length)].dropna().tolist()
+#     score = function_to_use(selected_baits, df_norm)
+#     literature_scores_a.append(score)
+
+# # Add the scores to the results
+# nmf_scores["Saya 1"] = literature_scores_a
+
+
+# # Load the combined bait list file
+# marker_df = pd.read_csv("literature_selected_baits_all_lengths_Saya_guided.csv")
+# # Compute for literature-based markers from the single file
+# literature_scores_b = []
+
+# for length in bait_lengths:
+#     selected_baits = marker_df[str(length)].dropna().tolist()
+#     score = function_to_use(selected_baits, df_norm)
+#     literature_scores_b.append(score)
+
+# # Add the scores to the results
+# nmf_scores["Saya 2"] = literature_scores_b
+
+
+# # Load the combined bait list file
+# marker_df = pd.read_csv("literature_selected_baits_all_lengths_Saya_guided_pr.csv")
+# # Compute for literature-based markers from the single file
+# literature_scores_c = []
+
+# for length in bait_lengths:
+#     selected_baits = marker_df[str(length)].dropna().tolist()
+#     score = function_to_use(selected_baits, df_norm)
+#     literature_scores_c.append(score)
+
+# # Add the scores to the results
+# nmf_scores["Saya 3"] = literature_scores_c
 
 # Load the combined bait list file
-marker_df = pd.read_csv("literature_selected_baits_all_lengths.csv")
+marker_df = pd.read_csv("targeted_approach_selected_baits_expert.csv")
 # Compute for literature-based markers from the single file
-literature_scores = []
+literature_scores_d = []
 
 for length in bait_lengths:
     selected_baits = marker_df[str(length)].dropna().tolist()
     score = function_to_use(selected_baits, df_norm)
-    literature_scores.append(score)
+    literature_scores_d.append(score)
 
 # Add the scores to the results
-nmf_scores["Literature Baits"] = literature_scores
+nmf_scores["Expert (manual)"] = literature_scores_d
+
 
 # Convert to DataFrame for plotting
 df_nmf_scores = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in nmf_scores.items()]))  # Ensure equal lengths
@@ -1279,13 +1321,13 @@ df_nmf_scores.boxplot(grid=False, patch_artist=True, boxprops=dict(facecolor='li
 
 
 plt.xlabel("Bait Selection Method")
-plt.ylabel("NMF min KL Divergence")
+plt.ylabel("Mean GMM Pearson correlation")
 # plt.title("Comparison of Bait Selection Methods Using NMF Mean Pearson Correlation")
 plt.xticks(rotation=90)
 plt.tight_layout()
 
 # Save and show plot
-plt.savefig("plots/tageted_approach_comparison_nmf_p.pdf", dpi=300)
-plt.show()
+plt.savefig("plots/tageted_approach_comparison_gmm_corr_new.pdf", dpi=300)
+# plt.show()
 
 print("Plot saved as nmf_correlation_comparison_fixed.png")
