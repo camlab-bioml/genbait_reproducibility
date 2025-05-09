@@ -1201,7 +1201,7 @@ def compute_gmm_correlation(selected_baits, df_norm, cluster_numbers=[15, 20, 25
 df_norm = pd.read_csv("datasets/df_norm.csv", index_col=0)  # Normalized 
 saint_filepath = "datasets/saint-latest.txt"
 original_baits_filepath = "datasets/original_baits.csv"
-output_filepath = "targeted_approach_selected_baits_highest_number_of_preys.csv"
+# output_filepath = "targeted_approach_selected_baits_highest_number_of_preys.csv"
 bait_lengths = [40, 60, 80]
 
 # baits_with_most_preys(saint_filepath, original_baits_filepath, bait_lengths, output_filepath)
@@ -1212,10 +1212,10 @@ bait_lengths = [40, 60, 80]
 # Load the datasets
 targeted_methods = pd.read_csv("targeted_approach_selected_baits_all_methods.csv")
 highest_preys = pd.read_csv("targeted_approach_selected_baits_highest_number_of_preys.csv")
-highest_preys_proportional = pd.read_csv("targeted_approach_selected_baits_highest_number_of_preys_proportional.csv")
+# highest_preys_proportional = pd.read_csv("targeted_approach_selected_baits_highest_number_of_preys_proportional.csv")
 
 number_of_components = 20
-function_to_use = compute_gmm_correlation
+function_to_use = compute_nmf_go_jaccard
 
 
 # Dictionary to store NMF correlation scores for each method
@@ -1239,61 +1239,38 @@ for length in bait_lengths:
     selected_baits = highest_preys[str(length)].dropna().tolist()
     score = function_to_use(selected_baits, df_norm)
     highest_scores.append(score)
-nmf_scores["High-yield (global)"] = highest_scores
+nmf_scores["High-yield baits"] = highest_scores
 
 
-# Compute for highest number of preys
-highest_scores_proportional = []
-for length in bait_lengths:
-    selected_baits = highest_preys_proportional[str(length)].dropna().tolist()
-    score = function_to_use(selected_baits, df_norm)
-    highest_scores_proportional.append(score)
-nmf_scores["High-yield (proportional)"] = highest_scores_proportional
-
-
-# # Load the combined bait list file
-# marker_df = pd.read_csv("literature_selected_baits_all_lengths_Saya_manual.csv")
-# # Compute for literature-based markers from the single file
-# literature_scores_a = []
-
+# # Compute for highest number of preys
+# highest_scores_proportional = []
 # for length in bait_lengths:
-#     selected_baits = marker_df[str(length)].dropna().tolist()
+#     selected_baits = highest_preys_proportional[str(length)].dropna().tolist()
 #     score = function_to_use(selected_baits, df_norm)
-#     literature_scores_a.append(score)
+#     highest_scores_proportional.append(score)
+# nmf_scores["High-yield (proportional)"] = highest_scores_proportional
 
-# # Add the scores to the results
-# nmf_scores["Saya 1"] = literature_scores_a
-
-
-# # Load the combined bait list file
-# marker_df = pd.read_csv("literature_selected_baits_all_lengths_Saya_guided.csv")
-# # Compute for literature-based markers from the single file
-# literature_scores_b = []
-
-# for length in bait_lengths:
-#     selected_baits = marker_df[str(length)].dropna().tolist()
-#     score = function_to_use(selected_baits, df_norm)
-#     literature_scores_b.append(score)
-
-# # Add the scores to the results
-# nmf_scores["Saya 2"] = literature_scores_b
-
-
-# # Load the combined bait list file
-# marker_df = pd.read_csv("literature_selected_baits_all_lengths_Saya_guided_pr.csv")
-# # Compute for literature-based markers from the single file
-# literature_scores_c = []
-
-# for length in bait_lengths:
-#     selected_baits = marker_df[str(length)].dropna().tolist()
-#     score = function_to_use(selected_baits, df_norm)
-#     literature_scores_c.append(score)
-
-# # Add the scores to the results
-# nmf_scores["Saya 3"] = literature_scores_c
 
 # Load the combined bait list file
-marker_df = pd.read_csv("targeted_approach_selected_baits_expert.csv")
+marker_df = pd.read_csv("targeted_approach_selected_baits_expert1.csv")
+# Compute for literature-based markers from the single file
+literature_scores_a = []
+
+for length in bait_lengths:
+    selected_baits = marker_df[str(length)].dropna().tolist()
+    score = function_to_use(selected_baits, df_norm)
+    literature_scores_a.append(score)
+
+# Add the scores to the results
+nmf_scores["Expert 1"] = literature_scores_a
+
+
+
+
+
+
+# Load the combined bait list file
+marker_df = pd.read_csv("targeted_approach_selected_baits_expert2.csv")
 # Compute for literature-based markers from the single file
 literature_scores_d = []
 
@@ -1303,7 +1280,7 @@ for length in bait_lengths:
     literature_scores_d.append(score)
 
 # Add the scores to the results
-nmf_scores["Expert (manual)"] = literature_scores_d
+nmf_scores["Expert 2"] = literature_scores_d
 
 
 # Convert to DataFrame for plotting
@@ -1321,13 +1298,13 @@ df_nmf_scores.boxplot(grid=False, patch_artist=True, boxprops=dict(facecolor='li
 
 
 plt.xlabel("Bait Selection Method")
-plt.ylabel("Mean GMM Pearson correlation")
+plt.ylabel("Mean NMF GO Jaccard index")
 # plt.title("Comparison of Bait Selection Methods Using NMF Mean Pearson Correlation")
 plt.xticks(rotation=90)
 plt.tight_layout()
 
 # Save and show plot
-plt.savefig("plots/tageted_approach_comparison_gmm_corr_new.pdf", dpi=300)
+plt.savefig("plots/tageted_approach_comparison_nmf_go_mean_new.pdf", dpi=300)
 # plt.show()
 
 print("Plot saved as nmf_correlation_comparison_fixed.png")
