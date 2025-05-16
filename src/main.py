@@ -374,6 +374,8 @@ def main():
         get_cellline_data(CONFIG['plots_path'])
         generate_simulated_expression_data(df_norm, CONFIG['cell_lines_path'], CONFIG['plots_path']+'uniprot_mapping.pkl') # ONLY FOR DATASET 1
 
+        plot_nmf_score_vs_expression()
+        
     elif args.step == 'bait_expression_analysis': # ONLY FOR DATASET 1
         # cell = 'hela'
         plot_baits_expression_heatmap(
@@ -383,7 +385,7 @@ def main():
             output_dir=CONFIG['plots_path']
         )
 
-        plot_nmf_score_vs_expression()
+        
 
     elif args.step == 'combined_nmf_corr':
         dataset_paths = [
