@@ -40,7 +40,7 @@ from plot_runtime_analysis import plot_runtime_analysis
 from plot_individual_components_bait_size import plot_individual_components_vs_bait_sizes
 from plot_topology_metrics import plot_topology_metrics
 from cell_line_data_simulator_baits import plot_baits_expression_heatmap
-from plot_nmf_score_vs_expression import plot_nmf_score_vs_expression
+from plot_nmf_score_vs_expression import plot_nmf_score_simulation_vs_expression
 from cell_line_data_simulator_preys import generate_simulated_expression_data
 from get_proteomicsdb_cell_line_data import get_cellline_data
 from plot_nmf_scores_cmbined_datasets import plot_nmf_correlation_combined
@@ -373,9 +373,8 @@ def main():
         df_norm = pd.read_csv(CONFIG["df_norm_path"], index_col=0)
         get_cellline_data(CONFIG['plots_path'])
         generate_simulated_expression_data(df_norm, CONFIG['cell_lines_path'], CONFIG['plots_path']+'uniprot_mapping.pkl') # ONLY FOR DATASET 1
+        plot_nmf_score_simulation_vs_expression()
 
-        plot_nmf_score_vs_expression()
-        
     elif args.step == 'bait_expression_analysis': # ONLY FOR DATASET 1
         # cell = 'hela'
         plot_baits_expression_heatmap(

@@ -11,7 +11,7 @@ matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Arial']
 
 
-def plot_nmf_score_vs_expression():
+def plot_nmf_score_simulation_vs_expression():
 
     # List of cell lines
     cell_lines = [
