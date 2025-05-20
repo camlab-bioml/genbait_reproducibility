@@ -93,7 +93,7 @@ def plot_nmf_score_simulation_vs_expression():
         r_value, p_value = pearsonr(df["ExpressionCorrWithHEK293"], df["MeanNMFScore"])
         plt.text(
             0.75, 0.45,
-            f"Pearson r = {r_value:.2f}",
+            f"Pearson r = {r_value:.2f}\np = {p_value:.3f}",
             transform=plt.gca().transAxes,
             fontsize=8,
             verticalalignment='top',
