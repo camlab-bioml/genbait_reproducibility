@@ -1,11 +1,17 @@
 # GENBAIT Reproducibility
 
-This repository contains the results of all analyses in the GENBAIT project for bait selection in BioID experiments. 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16580131.svg)](https://doi.org/10.5281/zenodo.16580131)
+
+This repository contains the results of all analyses in the GENBAIT project for bait selection in BioID experiments.
+
+If you use this reproducibility package, please cite:
+https://doi.org/10.5281/zenodo.16580131
 
 A **preprint** describing the method and introducing a novel benchmarking platform is available:  
 [Kasmaeifar et al. (2024) _Computational design and evaluation of optimal bait sets for scalable proximity proteomics_](https://www.biorxiv.org/content/10.1101/2024.10.03.616533v1)
 
 This project is designed to be reproducible using Snakemake. Below are the instructions on how to reproduce the results of each step in the workflow using the provided configuration files.
+
 
 ---
 
